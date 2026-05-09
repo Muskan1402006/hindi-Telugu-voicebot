@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hindi + Telugu Voice Bot</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            width: 450px;
+            height: 600px;
+            background: #ffffff;
+            border-radius: 14px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .header {
+            background: #5a67d8;
+            color: white;
+            padding: 16px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        #chatbox {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background: #f7f7f7;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message {
+            margin: 8px 0;
+            padding: 10px 14px;
+            border-radius: 12px;
+            max-width: 75%;
+            font-size: 14px;
+            word-wrap: break-word;
+        }
+
+        .user {
+            align-self: flex-end;
+            background: #dbeafe;
+            color: #1e3a8a;
+            text-align: right;
+        }
+
+        .bot {
+            align-self: flex-start;
+            background: #e2e8f0;
+            color: #1a202c;
+            text-align: left;
+        }
+
+        .footer {
+            padding: 15px;
+            border-top: 1px solid #ddd;
+            text-align: center;
+            background: white;
+        }
+
+        button {
+            padding: 12px 22px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            background: #5a67d8;
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #434190;
+        }
+
+        h1 {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">Hindi + Telugu Voice Bot</div>
+
+    <div id="chatbox"></div>
+
+    <div class="footer">
+        <button onclick="startListening()">🎤 Speak</button>
+    </div>
+</div>
+
+<script>
+const chatbox = document.getElementById("chatbox");
+
+// Speech Recognition (Speech → Text)
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+const recognition = new SpeechRecognition();
+recognition.lang = "hi-IN";
+recognition.continuous = false;
+
+function startListening() {
+    recognition.start();
+}
+
+recognition.onresult = function(event) {
+    const userText = event.results[0][0].transcript;
+    addMessage("You: " + userText, "user");
+    generateReply(userText);
+};
+
+// Add message to chat
+function addMessage(text, cls) {
+    const div = document.createElement("div");
+    div.className = "message " + cls;
+    div.innerText = text;
+    chatbox.appendChild(div);
+    chatbox.scrollTop = chatbox.scrollHeight;
+}
+
+// Bot reply logic (simple)
+function generateReply(text) {
+    let reply = "";
+    text = text.toLowerCase();
+
+    if (text.includes("namaste") || text.includes("नमस्ते")) {
+        reply = "Namaste! Mee peru enti?";
+    }
+    else if (text.includes("naa peru") || text.includes("मेरा नाम")) {
+        reply = "Bahut accha naam hai. Aap kaise ho?";
+    }
+    else {
+        reply = "Samjha nahi. Kripya phir se boliye.";
+    }
+
+    addMessage("Bot: " + reply, "bot");
+    speak(reply);
+}
+
+// Text → Speech (Bot speaking)
+function speak(text) {
+    const speech = new SpeechSynthesisUtterance();
+    speech.text = text;
+    speech.lang = "hi-IN";
+    speech.rate = 1;
+    window.speechSynthesis.speak(speech);
+}
+</script>
+
+</body>
+</html>
